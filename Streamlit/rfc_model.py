@@ -8,33 +8,36 @@ import streamlit_utils.utils as utils
 
 
 def user_input_features():
-    sepal_length = st.sidebar.slider('Sepal length', 4.3, 7.9, 5.4)  # lower limit, upper limit, default value
-    sepal_width = st.sidebar.slider('Sepal width', 2.0, 4.4, 3.4)
-    petal_length = st.sidebar.slider('Petal length', 1.0, 6.9, 1.3)
-    petal_width = st.sidebar.slider('Petal width', 0.1, 2.5, 0.2)
+    sepal_length = st.sidebar.slider(
+        "Sepal length", 4.3, 7.9, 5.4
+    )  # lower limit, upper limit, default value
+    sepal_width = st.sidebar.slider("Sepal width", 2.0, 4.4, 3.4)
+    petal_length = st.sidebar.slider("Petal length", 1.0, 6.9, 1.3)
+    petal_width = st.sidebar.slider("Petal width", 0.1, 2.5, 0.2)
     data = {
-        'Sepal length': sepal_length,
-        'Sepal width': sepal_width,
-        'Petal length': petal_length,
-        'Petal width': petal_width
+        "Sepal length": sepal_length,
+        "Sepal width": sepal_width,
+        "Petal length": petal_length,
+        "Petal width": petal_width,
     }
-    features = pd.DataFrame(data, index=['Parameters'])
+    features = pd.DataFrame(data, index=["Parameters"])
     return features
 
 
 # Page Config ...
 st.set_page_config(layout="wide", page_title="Flower Prediction", page_icon="🎴")
 
-utils.heading(title='Simple Iris Flower Prediction',
-              sub_title='This app makes predictions about the <b>type</b> of <b style="color:#87CEEB">Iris</b> '
-                        'flower.<br>Use the the <b '
-                        'style="color:#87CEEB">sliders</b> on the '
-                        'sidebar to select the input parameters.',
-              title_color='lightblue',
-              top=50
-              )
+utils.heading(
+    title="Simple Iris Flower Prediction",
+    sub_title='This app makes predictions about the <b>type</b> of <b style="color:#87CEEB">Iris</b> '
+    "flower.<br>Use the the <b "
+    'style="color:#87CEEB">sliders</b> on the '
+    "sidebar to select the input parameters.",
+    title_color="lightblue",
+    top=50,
+)
 
-st.sidebar.header('User Input Parameters')
+st.sidebar.header("User Input Parameters")
 
 # Model fitting and Prediction ...
 
@@ -47,16 +50,18 @@ model = rfc()
 model.fit(X, y)
 
 prediction = model.predict(df)
-prediction_prob = pd.DataFrame(model.predict_proba(df), columns=iris.target_names, index=["Probability (in %)"])
-prediction_prob = prediction_prob.rename(columns={'setosa': 'Setosa',
-                                                  'versicolor': 'Versicolor',
-                                                  'virginica': 'Virginica'})
+prediction_prob = pd.DataFrame(
+    model.predict_proba(df), columns=iris.target_names, index=["Probability (in %)"]
+)
+prediction_prob = prediction_prob.rename(
+    columns={"setosa": "Setosa", "versicolor": "Versicolor", "virginica": "Virginica"}
+)
 prediction_prob = prediction_prob.apply(lambda p: round(p * 100, 2), axis=1)
 
 labels = pd.DataFrame({"Species Name": iris.target_names})
 labels["Species Name"] = labels["Species Name"].apply(lambda x: x.title())
 labels.reset_index(inplace=True)
-labels.set_index('index', inplace=True)
+labels.set_index("index", inplace=True)
 
 # Page UI ...
 
@@ -72,7 +77,9 @@ with col1:
 
 with col2:
     st.subheader("Prediction")
-    st.dataframe(pd.DataFrame(labels["Species Name"][prediction], columns=["Species Name"]))
+    st.dataframe(
+        pd.DataFrame(labels["Species Name"][prediction], columns=["Species Name"])
+    )
 
     st.subheader("Prediction Probability")
     st.dataframe(prediction_prob)
